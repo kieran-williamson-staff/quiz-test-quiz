@@ -804,7 +804,10 @@
             }
             
             calculateSimpleScores() {
-                const categoryScores = this.config.categories.reduce((acc, category) => {
+                // Filter out empty categories
+                const validCategories = this.config.categories.filter(cat => cat && cat.trim() !== '');
+                
+                const categoryScores = validCategories.reduce((acc, category) => {
                     acc[category] = 0;
                     return acc;
                 }, {});
@@ -814,16 +817,32 @@
                 
                 this.config.questions.forEach((question, index) => {
                     const score = this.answers[index] || 0;
-                    let adjustedScore = score;
-                    
-                    if (question.reverse) {
-                        adjustedScore = 6 - score;
+                    if (score > 0) {  // Only count answered questions
+                        let adjustedScore = score;
+                        
+                        if (question.reverse) {
+                            adjustedScore = 6 - score;
+                        }
+                        
+                        totalScore += adjustedScore;
+                        questionCount++;
+                        
+                        // Only add to category scores if category exists
+                        if (question.category && categoryScores.hasOwnProperty(question.category)) {
+                            categoryScores[question.category] += adjustedScore;
+                        }
                     }
-                    
-                    totalScore += adjustedScore;
-                    categoryScores[question.category] += adjustedScore;
-                    questionCount++;
                 });
+                
+                // Handle case where no questions were answered
+                if (questionCount === 0) {
+                    return { 
+                        totalScore: 0,
+                        rawScore: 0,
+                        categoryScores,
+                        scoringMode: 'simple'
+                    };
+                }
                 
                 const minPossible = questionCount * 1;
                 const maxPossible = questionCount * 5;
@@ -952,6 +971,7 @@
             submitQuiz() {
                 const scores = this.calculateScores();
                 console.log('Calculated scores:', scores);
+                console.log('Config results:', this.config.results);
                 
                 const resultBand = this.getResultBand(scores);
                 console.log('Result band:', resultBand);
@@ -959,8 +979,24 @@
                 if (!resultBand) {
                     console.error('No result band found for scores:', scores);
                     console.error('Available bands:', this.config.results.bands);
-                    // Show a default message
-                    alert('Quiz completed! Score: ' + scores.totalScore + '%');
+                    
+                    // Check if we have any results at all
+                    if (!this.config.results.bands || this.config.results.bands.length === 0) {
+                        alert('No results configured for this quiz!');
+                        return;
+                    }
+                    
+                    // Show the score ranges for debugging
+                    console.log('Score ranges:');
+                    this.config.results.bands.forEach(band => {
+                        const min = band.minScore !== undefined ? band.minScore : band.min;
+                        const max = band.maxScore !== undefined ? band.maxScore : band.max;
+                        console.log(`- ${band.title}: ${min}-${max}`);
+                    });
+                    
+                    // Default to first result if no match found
+                    const defaultResult = this.config.results.bands[0];
+                    this.displayDefaultResult(scores.totalScore);
                     return;
                 }
                 
@@ -968,7 +1004,9 @@
                 document.getElementById('quizNavigation').style.display = 'none';
                 
                 this.elements.resultsContainer.classList.add('quiz-results--active');
-                this.elements.resultsContainer.classList.add(`quiz-results--theme-${resultBand.className}`);
+                if (resultBand.className) {
+                    this.elements.resultsContainer.classList.add(`quiz-results--theme-${resultBand.className}`);
+                }
                 
                 this.displayResult(resultBand);
                 this.createThumbnails(resultBand);
@@ -980,6 +1018,23 @@
                         result: resultBand.title
                     }, '*');
                 }
+            }
+            
+            displayDefaultResult(score) {
+                // Hide quiz elements
+                this.elements.quizContent.style.display = 'none';
+                document.getElementById('quizNavigation').style.display = 'none';
+                
+                // Show results container
+                this.elements.resultsContainer.classList.add('quiz-results--active');
+                
+                // Display a simple result
+                this.elements.quizLevel.textContent = `Your Score: ${score}%`;
+                this.elements.resultsDescription.textContent = 'Thank you for completing the quiz!';
+                this.elements.resultsImage.style.display = 'none';
+                
+                // Hide thumbnails for default result
+                document.getElementById('thumbnailsContainer').style.display = 'none';
             }
             
             displayResult(resultBand) {
