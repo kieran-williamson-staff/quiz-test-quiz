@@ -560,8 +560,9 @@
   "scoringMode": "simple",
   "questions": [
     {
+      "id": 1,
       "text": "How do you like ice cream",
-      "category": "",
+      "category": "Basic Questions",
       "weight": 1,
       "reverse": false
     }
@@ -574,15 +575,19 @@
       {
         "title": "You answered the question",
         "min": 1,
-        "max": 1,
+        "max": 10,
+        "minScore": 1,
+        "maxScore": 10,
         "description": "Good job",
         "image": "",
         "className": ""
       },
       {
         "title": "You didn't answer the question",
-        "min": 1,
+        "min": 0,
         "max": 1,
+        "minScore": 0,
+        "maxScore": 1,
         "description": "",
         "image": "",
         "className": ""
