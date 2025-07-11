@@ -929,23 +929,33 @@
                                 result.category === scores.dominantCategory
                             );
                         }
-                        return this.config.results.bands.find(band => 
-                            scores.totalScore >= band.minScore && scores.totalScore <= band.maxScore
-                        );
+                        return this.config.results.bands.find(band => {
+                            const minScore = band.minScore !== undefined ? band.minScore : band.min;
+                            const maxScore = band.maxScore !== undefined ? band.maxScore : band.max;
+                            return scores.totalScore >= minScore && scores.totalScore <= maxScore;
+                        });
                         
                     default:
-                        return this.config.results.bands.find(band => 
-                            scores.totalScore >= band.minScore && scores.totalScore <= band.maxScore
-                        );
+                        return this.config.results.bands.find(band => {
+                            const minScore = band.minScore !== undefined ? band.minScore : band.min;
+                            const maxScore = band.maxScore !== undefined ? band.maxScore : band.max;
+                            return scores.totalScore >= minScore && scores.totalScore <= maxScore;
+                        });
                 }
             }
 
             submitQuiz() {
                 const scores = this.calculateScores();
+                console.log('Calculated scores:', scores);
+                
                 const resultBand = this.getResultBand(scores);
+                console.log('Result band:', resultBand);
                 
                 if (!resultBand) {
                     console.error('No result band found for scores:', scores);
+                    console.error('Available bands:', this.config.results.bands);
+                    // Show a default message
+                    alert('Quiz completed! Score: ' + scores.totalScore + '%');
                     return;
                 }
                 
