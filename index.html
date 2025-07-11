@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Quiz</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-color: #f1c40f;
+            --bg-color: #faecea;
+            --text-light: #4a4a4a;
+            --text-lighter: #3a3a3a;
+            --text-dark: #2a2a2a;
+            --success-color: #4caf50;
+            --text-color: #2a2a2a;
+            --font-family: Poppins;
+        }
+        
+        /* Rest of CSS from original quiz */
+        
+        /* Full CSS content from the original quiz */
+        body {
+            font-family: var(--font-family, 'Poppins'), sans-serif;
+            background: var(--bg-color);
+            /* ... rest of CSS ... */
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <!-- Quiz HTML structure -->
+        
+        <!-- Progress Bar -->
+        <div class="quiz-progress" role="progressbar">
+            <div class="quiz-progress__fill" id="progressFill"></div>
+        </div>
+        <!-- ... rest of HTML ... -->
+        
+    </div>
+    
+    <script>
+        const QUIZ_CONFIG = {
+  "questionsPerPage": 5,
+  "scoringMode": "simple",
+  "questions": [
+    {
+      "text": "How do you like ice cream",
+      "category": "Basic Questions",
+      "weight": 1,
+      "reverse": false
+    }
+  ],
+  "categories": [
+    "Basic Questions"
+  ],
+  "results": {
+    "bands": [
+      {
+        "title": "You answered the question",
+        "min": 1,
+        "max": 1,
+        "description": "Good job",
+        "image": "",
+        "className": ""
+      },
+      {
+        "title": "You didn't answer the question",
+        "min": 1,
+        "max": 1,
+        "description": "",
+        "image": "",
+        "className": ""
+      }
+    ]
+  }
+};
+        
+        // Quiz engine JavaScript
+        
+        // Full JavaScript content from the original quiz
+        class QuizEngine {
+            // ... quiz engine code ...
+        }
+        
+    </script>
+</body>
+</html>
